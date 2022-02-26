@@ -2,13 +2,31 @@
 // import { Icon } from '@mui/material';
 import styled from 'styled-components'
 import { db } from '../firebaseFile.js';
-import { collection,addDoc } from 'firebase/firestore/lite';
-const SidebarOptionalContainer=({Icon,title,add})=>{
+import { collection,addDoc,getDocs } from 'firebase/firestore/lite';
+import { useDispatch } from 'react-redux';
+import { appSliceActions } from '../features/appSlice.js';
+const SidebarOptionalContainer=({Icon,title,add,id,UpdateSnapShot})=>{
+
+    const dispatch=useDispatch();
 
     console.log( "Add ",add);
     const addData= async (data)=>{
         const path =collection(db,"rooms")
         const docId= await  addDoc( path,{name:data})
+        let docs_snap=[];
+
+        const docs= await getDocs(path)
+        console.log(docs);
+        docs._docs.map((ele)=>{
+            const doc={
+                id:ele.id,
+                name:ele._document.data.value.mapValue.fields.name.stringValue,
+            }
+            // console.log(doc);
+            docs_snap.push(doc)
+
+        })
+        UpdateSnapShot(docs_snap)
 
         return docId
 
@@ -35,6 +53,14 @@ const SidebarOptionalContainer=({Icon,title,add})=>{
 
     }
     const selectChannel=()=>{
+        if(id)
+        {
+            const data={
+                roomId:id
+            }
+            dispatch(appSliceActions.enterRoom(data))
+
+        }
         
     }
 
@@ -84,4 +110,7 @@ cursor: pointer;
  }
 
 `
-const SidebarOptionalChannel=styled.div``
+const SidebarOptionalChannel=styled.h3`
+font-weight:300;
+padding:10px 0px;
+`

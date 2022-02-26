@@ -1,14 +1,74 @@
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord'; import React from 'react'
 import FiberDvrIcon from '@mui/icons-material/FiberDvr';
 import styled from 'styled-components'
-import { Apps, Bookmark, BookmarkBorder, Create, Drafts, Expand, ExpandLess, FileCopy, Inbox, InsertComment, PeopleAlt,ExpandMore, Add } from '@mui/icons-material';
+import { Apps, Bookmark, BookmarkBorder, Create, Drafts, Expand, ExpandLess, FileCopy, Inbox, InsertComment, PeopleAlt, ExpandMore, Add, DockSharp } from '@mui/icons-material';
 import SidebarOptionalContainer from './SideBarComponents';
 import { db } from '../firebaseFile';
-import { collection } from 'firebase/firestore/lite';
-import {useCollection} from 'react-firebase-hooks'
+import { collection, getDocs } from 'firebase/firestore/lite';
+// import { useCollection } from 'react-firebase-hooks/firestore/dist/firestore/useCollection';
+import { useState, useEffect } from 'react';
 
 const SideBar = () => {
-    const [channels ,loading , error]= useCollection(collection(db,"rooms"))
+
+
+    let c_data = []
+    const [channel, setChannel] = useState([]);
+    const fetchDoc = async () => {
+        const path = collection(db, "rooms")
+        const docs = await getDocs(path)
+        // const data= await docs.json();
+         console.log( typeof(docs)); 
+        // console.log(docs);
+        
+
+        return docs._docs
+
+    }
+    const UpdateSnapShot=(data)=>{
+        setChannel(data);
+
+
+    }
+
+    useEffect(() => {
+        fetchDoc().then((docs) => {
+
+            console.log(docs);
+            const  channelList=[];
+            
+            docs.map((doc) => {
+                //  const ans=JSON.parse(doc);
+                //  console.log(ans);
+                
+               
+                const messg={
+                    name:doc._document.data.value.mapValue.fields.name.stringValue,
+                    id:doc.id
+        
+                }
+               channelList.push(messg)
+          
+        
+                
+           })
+
+
+            setChannel(channelList)
+        })
+
+
+    }, [ ])
+    const channels = channel.map((doc) => {
+    
+
+         return <SidebarOptionalContainer
+           key={doc.id}
+           id={doc.id}
+      
+           title={doc.name}
+       />
+   })
+
     return (
         <SidebarContainer>
             <SidebarHeader>
@@ -36,20 +96,14 @@ const SideBar = () => {
             <SidebarOptionalContainer Icon={FileCopy} title="File browser" />
             <SidebarOptionalContainer Icon={ExpandLess} title="Show Less" />
             <hr />
-            <SidebarOptionalContainer Icon={ExpandMore} title="Channel"/>
+            <SidebarOptionalContainer Icon={ExpandMore} title="Channel" />
             <hr />
-            <SidebarOptionalContainer  add Icon={Add} title="Add Channel"/>
-            <hr/>
+            <SidebarOptionalContainer  UpdateSnapShot={UpdateSnapShot}  add Icon={Add} title="Add Channel" />
+            {/* <hr /> */}
             {
-                (channels)?.docs.map((doc)=>{
-                    <SidebarOptionalContainer
-                    key={doc.id}
-                    id={doc.id}
-                    add
-                    title={doc.data().name}
-                    />
-                })
+               channels
             }
+
 
 
         </SidebarContainer>
