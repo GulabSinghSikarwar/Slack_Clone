@@ -16,6 +16,7 @@ const SideBar = () => {
 
     let c_data = []
     const [channel, setChannel] = useState([]);
+    let [channelComponent,setChannelComponent]=useState(null)
     const fetchDoc = async () => {
         const path = collection(db, "rooms")
         const docs = await getDocs(path)
@@ -27,6 +28,19 @@ const SideBar = () => {
     }
     const UpdateSnapShot = (data) => {
         setChannel(data);
+
+        const channelComp=data.map((doc) => {
+
+
+            return <SidebarOptionalContainer
+                key={doc.id}
+                id={doc.id}
+    
+                title={doc.name}
+            />
+        })
+        setChannelComponent(channelComp);
+
 
 
     }
@@ -58,8 +72,21 @@ const SideBar = () => {
 
             })
 
+            const channelComp=channelList.map((doc) => {
 
-            setChannel(channelList)
+
+                return <SidebarOptionalContainer
+                    key={doc.id}
+                    id={doc.id}
+        
+                    title={doc.name}
+                />
+            })
+            setChannelComponent(channelComp)
+
+            // setChannel(channelList)
+            
+
         })
 
 
@@ -110,7 +137,7 @@ const SideBar = () => {
             <SidebarOptionalContainer UpdateSnapShot={UpdateSnapShot} add Icon={Add} title="Add Channel" />
             {/* <hr /> */}
             {
-                channels
+                channelComponent
             }
 
 
@@ -121,6 +148,7 @@ const SideBar = () => {
 export default SideBar;
 
 const SidebarContainer = styled.div`
+overflow-y: scroll;
 background-color: var(--slack-color);
 color: white;
 /* display: flex; */

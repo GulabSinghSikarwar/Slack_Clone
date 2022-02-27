@@ -16,7 +16,7 @@ function Chat() {
     const [roomMessages, setRoomMessages] = useState(null)
     const chatBottomRef = useRef(null)
     const [bottomMessage, setBottomMessage] = useState([])
-    let [channelComponent,setChannelComponent]=useState(null)
+
 
     // if (chatBottomRef != null) {
     //     chatBottomRef.current.scrollIntoView({ behavior: 'smooth' })

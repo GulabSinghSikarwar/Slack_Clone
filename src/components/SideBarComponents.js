@@ -9,14 +9,18 @@ const SidebarOptionalContainer = ({ Icon, title, add, id, UpdateSnapShot }) => {
 
     const dispatch = useDispatch();
 
-    console.log("Add ", add);
+   
+
+
     const addData = async (data) => {
+
+
         const path = collection(db, "rooms")
         const docId = await addDoc(path, { name: data })
         let docs_snap = [];
 
         const docs = await getDocs(path)
-        console.log(docs.data());
+        // console.log(docs.data());
 
         docs._docs.map((ele) => {
             const doc = {
@@ -27,6 +31,7 @@ const SidebarOptionalContainer = ({ Icon, title, add, id, UpdateSnapShot }) => {
             docs_snap.push(doc)
 
         })
+        console.log(docs_snap);
         UpdateSnapShot(docs_snap)
 
         return docId
@@ -39,6 +44,7 @@ const SidebarOptionalContainer = ({ Icon, title, add, id, UpdateSnapShot }) => {
 
         if (channelName) {
             addData(channelName).then((id) => {
+                console.log();
                 return id.id
             }).then((id) => {
                 console.log("Real ID : ", id);
@@ -62,6 +68,7 @@ const SidebarOptionalContainer = ({ Icon, title, add, id, UpdateSnapShot }) => {
         }
 
     }
+    
 
     return (
         <SidebarOptionContainer
