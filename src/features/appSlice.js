@@ -10,7 +10,7 @@ const initialState = {
 export const appSlice = createSlice({
   name : 'app',
   initialState:initialState,
- 
+ //
   reducers: {
     enterRoom:(state,action)=>{
       state.roomId=action.payload.roomId

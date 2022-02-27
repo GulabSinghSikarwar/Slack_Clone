@@ -1,15 +1,18 @@
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord'; import React from 'react'
 import FiberDvrIcon from '@mui/icons-material/FiberDvr';
 import styled from 'styled-components'
-import { Apps, Bookmark, BookmarkBorder, Create, Drafts, Expand, ExpandLess, FileCopy, Inbox, InsertComment, PeopleAlt, ExpandMore, Add, DockSharp } from '@mui/icons-material';
+import { Apps, Bookmark, BookmarkBorder, Create, Drafts, Expand, ExpandLess, FileCopy, Inbox, InsertComment, PeopleAlt, ExpandMore, Add, DockSharp, Logout } from '@mui/icons-material';
 import SidebarOptionalContainer from './SideBarComponents';
 import { db } from '../firebaseFile';
 import { collection, getDocs } from 'firebase/firestore/lite';
-// import { useCollection } from 'react-firebase-hooks/firestore/dist/firestore/useCollection';
 import { useState, useEffect } from 'react';
-
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { auth } from "../firebaseFile";
+import { Alert } from '@mui/material';
+import { signOut } from 'firebase/auth';
 const SideBar = () => {
 
+    const [user] = useAuthState(auth)
 
     let c_data = []
     const [channel, setChannel] = useState([]);
@@ -17,57 +20,60 @@ const SideBar = () => {
         const path = collection(db, "rooms")
         const docs = await getDocs(path)
         // const data= await docs.json();
-         console.log( typeof(docs)); 
-        // console.log(docs);
-        
+        console.log(typeof (docs));
 
         return docs._docs
 
     }
-    const UpdateSnapShot=(data)=>{
+    const UpdateSnapShot = (data) => {
         setChannel(data);
 
 
+    }
+    const signOutAction = () => {
+        signOut(auth).then(() => {
+            // Sign-out successful.
+            <Alert severity="success">Log Out Successfully </Alert>
+        }).catch((error) => {
+            // An error happened.
+        });
     }
 
     useEffect(() => {
         fetchDoc().then((docs) => {
 
             console.log(docs);
-            const  channelList=[];
-            
+            const channelList = [];
+
             docs.map((doc) => {
-                //  const ans=JSON.parse(doc);
-                //  console.log(ans);
-                
-               
-                const messg={
-                    name:doc._document.data.value.mapValue.fields.name.stringValue,
-                    id:doc.id
-        
+
+                const messg = {
+                    name: doc._document.data.value.mapValue.fields.name.stringValue,
+                    id: doc.id
+
                 }
-               channelList.push(messg)
-          
-        
-                
-           })
+                channelList.push(messg)
+
+
+
+            })
 
 
             setChannel(channelList)
         })
 
 
-    }, [ ])
+    }, [])
     const channels = channel.map((doc) => {
-    
 
-         return <SidebarOptionalContainer
-           key={doc.id}
-           id={doc.id}
-      
-           title={doc.name}
-       />
-   })
+
+        return <SidebarOptionalContainer
+            key={doc.id}
+            id={doc.id}
+
+            title={doc.name}
+        />
+    })
 
     return (
         <SidebarContainer>
@@ -78,7 +84,7 @@ const SideBar = () => {
                     <h3>
 
                         <FiberManualRecordIcon />
-                        Gulab Singh
+                        {user.displayName}
 
                     </h3>
 
@@ -96,12 +102,15 @@ const SideBar = () => {
             <SidebarOptionalContainer Icon={FileCopy} title="File browser" />
             <SidebarOptionalContainer Icon={ExpandLess} title="Show Less" />
             <hr />
+            <UserAction onClick={signOutAction}>
+                <Logout /> <h3> LogOut </h3>
+            </UserAction>
             <SidebarOptionalContainer Icon={ExpandMore} title="Channel" />
             <hr />
-            <SidebarOptionalContainer  UpdateSnapShot={UpdateSnapShot}  add Icon={Add} title="Add Channel" />
+            <SidebarOptionalContainer UpdateSnapShot={UpdateSnapShot} add Icon={Add} title="Add Channel" />
             {/* <hr /> */}
             {
-               channels
+                channels
             }
 
 
@@ -164,4 +173,17 @@ flex:1;
 }
 /* display: flex; */
 
+`
+const UserAction = styled.div`
+cursor: pointer;
+margin-left: 5px;
+display: flex;
+font-size: 12px;
+align-items: center;
+padding-left: 2px;
+> h3{
+    font-weight:600;
+padding:10px 0px;
+margin-left: 2px ;
+}
 `

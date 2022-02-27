@@ -4,15 +4,23 @@ import { AccessTime } from "@mui/icons-material";
 import { Search } from "@mui/icons-material";
 import { HelpOutline } from "@mui/icons-material";
 import { style } from "@mui/system";
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { auth } from "../firebaseFile";
 
-// import  {Avatar} from '@material-ui/core'
 const Header = () => {
+  const [user] = useAuthState(auth)
+  console.log(user
+  );
+
+
+
   return (
     <HeaderComponents>
 
       {/* Left Header  */}
       <HeaderLeft>
-        <HeaderAvatar />
+        <HeaderAvatar 
+        src={user?.photoURL}/>
         <AccessTime />
       </HeaderLeft>
 
@@ -38,7 +46,7 @@ position: fixed;
 width: 100%;
 padding: 10px 0px;
 align-items: center;
-justify-content: space-between;
+/* justify-content: space-between; */
 background-color: var(--slack-color);
 
 color: white;
@@ -90,7 +98,6 @@ color: white;
 const HeaderRight = styled.div`
 flex: 0.3;
 display: flex;
-/* flex: 0; */
 align-items: flex-end;
 
 > .MuiSvgIcon-root{
