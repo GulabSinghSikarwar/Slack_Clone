@@ -3,6 +3,8 @@ import React from 'react'
 import styled from 'styled-components'
 import { auth } from '../../firebaseFile'
 import { GoogleAuthProvider,signInWithPopup } from 'firebase/auth'
+import  logo from '../../assets/logo.png'
+import './login.css';
 
 function Login() {
 const provider=new GoogleAuthProvider();
@@ -26,7 +28,7 @@ const provider=new GoogleAuthProvider();
     return (
         <LoginContainer>
             <InnerLoginContainer>
-                <img src='https://webdesigntips.blog/wp-content/uploads/2019/02/Slack-sparks-further-outrage-with-tweak-to-new-logo.jpg' />
+                <img src={logo} className='logo' />
                 <h1>Sign In to Slac-X</h1>
                 <p>slacx.com</p> 
                 <Button onClick={signIn}>Sign In With Google</Button>
